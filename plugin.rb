@@ -27,8 +27,16 @@ after_initialize do
 
   [
     "../app/controllers/discourse_reactions_controller.rb",
-    "../app/controllers/discourse_reactions/custom_reactions_controller.rb"
+    "../app/controllers/discourse_reactions/custom_reactions_controller.rb",
+    "../app/models/discourse_reactions/reaction.rb",
+    "../lib/discourse_reactions/post_serializer_extension.rb",
+    "../lib/discourse_reactions/post_extension.rb"
   ].each { |path| load File.expand_path(path, __FILE__) }
+
+  reloadable_patch do |plugin|
+    PostSerializer.class_eval { prepend DiscourseReactions::PostSerializerExtension }
+    Post.class_eval { prepend DiscourseReactions::PostExtension }
+  end
 
   Discourse::Application.routes.append do
     mount ::DiscourseReactions::Engine, at: '/'
