@@ -8,5 +8,9 @@ module DiscourseReactions
 
     belongs_to :user
     belongs_to :post
+
+    def self.valid_reactions
+      SiteSetting.discourse_reactions_enabled_reactions.split(/\|-?/)
+    end
   end
 end
