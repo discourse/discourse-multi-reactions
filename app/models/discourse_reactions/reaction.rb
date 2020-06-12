@@ -12,5 +12,15 @@ module DiscourseReactions
     def self.valid_reactions
       SiteSetting.discourse_reactions_enabled_reactions.split(/\|-?/)
     end
+
+    def self.positive_reactions
+      valid_reactions - negative_or_neutral_reactions
+    end
+
+    def self.negative_or_neutral_reactions
+      SiteSetting.discourse_reactions_enabled_reactions.split('|').map do |reaction|
+        reaction =~ /^\-/ ? reaction.delete_prefix("-") : nil
+      end.compact
+    end
   end
 end
