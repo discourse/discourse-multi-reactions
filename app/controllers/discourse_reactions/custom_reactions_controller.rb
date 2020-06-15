@@ -32,13 +32,35 @@ module DiscourseReactions
 
     def create
       return render_json_error(@post) unless DiscourseReactions::Reaction.valid_reactions.include?(params[:reaction])
-      reaction_scope.first_or_create!
-      add_or_remove_shadow_like
+
+      ActiveRecord::Base.transaction do
+        @reaction = fetch_reaction
+        @reaction_user = fetch_reaction_user
+
+        unless @reaction_user.persisted?
+          @reaction.update!(count_cache: @reaction.count_cache + 1)
+          @reaction_user.update!(reaction_id: @reaction.id)
+        end
+        add_or_remove_shadow_like
+      end
       render_json_dump(post_serializer.as_json)
     end
 
     def destroy
-      reaction_scope.delete_all
+      ActiveRecord::Base.transaction do
+        @reaction = fetch_reaction
+        @reaction_user = fetch_reaction_user
+
+        if @reaction_user
+          @reaction_user.destroy
+          if @reaction.count_cache > 1
+            @reaction.update!(count_cache: @reaction.count_cache - 1)
+          else
+            @reaction.destroy
+          end
+        end
+        add_or_remove_shadow_like
+      end
       render_json_dump(post_serializer.as_json)
     end
 
@@ -49,11 +71,15 @@ module DiscourseReactions
       # TODO remove like when all positive emojis are removed for specific user and post
     end
 
-    def reaction_scope
-      DiscourseReactions::Reaction.where(post_id: @post.id,
-                                         user_id: current_user.id,
-                                         reaction_value: params[:reaction],
-                                         reaction_type:  DiscourseReactions::Reaction.reaction_types['emoji'])
+    def fetch_reaction
+      @reaction = DiscourseReactions::Reaction.where(post_id: @post.id,
+                                                     reaction_value: params[:reaction],
+                                                     reaction_type:  DiscourseReactions::Reaction.reaction_types['emoji']).first_or_initialize
+    end
+
+    def fetch_reaction_user
+      @reaction_user = DiscourseReactions::ReactionUser.where(reaction_id: @reaction.id,
+                                                              user_id: current_user.id).first_or_initialize
     end
 
     def post_serializer

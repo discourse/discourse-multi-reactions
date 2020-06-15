@@ -29,6 +29,7 @@ after_initialize do
     "../app/controllers/discourse_reactions_controller.rb",
     "../app/controllers/discourse_reactions/custom_reactions_controller.rb",
     "../app/models/discourse_reactions/reaction.rb",
+    "../app/models/discourse_reactions/reaction_user.rb",
     "../lib/discourse_reactions/post_extension.rb",
     "../lib/discourse_reactions/topic_view_extension.rb"
   ].each { |path| load File.expand_path(path, __FILE__) }
@@ -49,14 +50,13 @@ after_initialize do
   end
 
   add_to_serializer(:post, :reactions) do
-    object.reactions.each_with_object({}) do |reaction, result|
-      key = reaction.reaction_value
-      result[key] = {
-        id: key,
+    object.reactions.map do |reaction|
+      {
+        id: reaction.reaction_value,
         type: reaction.reaction_type.to_sym,
-        users: (result.dig(key, :users) || []) << { username: reaction.user.username, avatar_template: reaction.user.avatar_template },
-        count: result.dig(key, :count).to_i + 1
+        users: reaction.reaction_users.map { |reaction_user| { username: reaction_user.username, avatar_template: reaction_user.avatar_template } },
+        count: reaction.count_cache
       }
-    end.values
+    end
   end
 end
