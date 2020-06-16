@@ -6,7 +6,7 @@ class CreateDiscourseReactionsReactionsTable < ActiveRecord::Migration[6.0]
       t.integer :post_id
       t.integer :reaction_type
       t.string :reaction_value
-      t.integer :count_cache, default: 0
+      t.integer :reaction_users_count
       t.timestamps
     end
     add_index :discourse_reactions_reactions, :post_id

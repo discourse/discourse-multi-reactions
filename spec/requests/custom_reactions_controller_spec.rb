@@ -36,13 +36,13 @@ describe DiscourseReactions::CustomReactionsController do
 
       reaction = DiscourseReactions::Reaction.last
       expect(reaction.reaction_value). to eq('thumbsup')
-      expect(reaction.count_cache). to eq(1)
+      expect(reaction.reaction_users_count). to eq(1)
 
       sign_in(user_2)
       post '/discourse-reactions/custom_reactions.json', params: { post_id: post_1.id, reaction: 'thumbsup' }
       reaction = DiscourseReactions::Reaction.last
       expect(reaction.reaction_value). to eq('thumbsup')
-      expect(reaction.count_cache). to eq(2)
+      expect(reaction.reaction_users_count). to eq(2)
     end
 
     it 'errors when emoji is invalid' do
@@ -55,13 +55,13 @@ describe DiscourseReactions::CustomReactionsController do
   context 'DELETE' do
     it 'deletes reaction if exists' do
       sign_in(user_1)
-      reaction = Fabricate(:reaction, post: post_1, count_cache: 2)
+      reaction = Fabricate(:reaction, post: post_1)
       Fabricate(:reaction_user, reaction: reaction, user: user_1)
       Fabricate(:reaction_user, reaction: reaction, user: user_2)
 
       delete '/discourse-reactions/custom_reactions.json', params: { post_id: post_1.id, reaction: 'otter' }
       expect(response.status).to eq(200)
-      expect(reaction.reload.count_cache).to eq(1)
+      expect(reaction.reload.reaction_users_count).to eq(1)
 
       sign_in(user_2)
       delete '/discourse-reactions/custom_reactions.json', params: { post_id: post_1.id, reaction: 'otter' }

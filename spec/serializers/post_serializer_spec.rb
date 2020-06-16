@@ -9,7 +9,7 @@ describe PostSerializer do
   fab!(:user_1) { Fabricate(:user) }
   fab!(:user_2) { Fabricate(:user) }
   fab!(:post_1) { Fabricate(:post, user: user_1) }
-  fab!(:reaction_1) { Fabricate(:reaction, post: post_1, count_cache: 2) }
+  fab!(:reaction_1) { Fabricate(:reaction, post: post_1) }
   fab!(:reaction_user_1) { Fabricate(:reaction_user, reaction: reaction_1, user: user_1) }
   fab!(:reaction_user_2) { Fabricate(:reaction_user, reaction: reaction_1, user: user_2) }
   fab!(:reaction_2) { Fabricate(:reaction, reaction_value: "thumbs-up", post: post_1) }

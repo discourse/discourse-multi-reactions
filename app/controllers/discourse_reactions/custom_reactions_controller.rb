@@ -34,13 +34,8 @@ module DiscourseReactions
       return render_json_error(@post) unless DiscourseReactions::Reaction.valid_reactions.include?(params[:reaction])
 
       ActiveRecord::Base.transaction do
-        @reaction = fetch_reaction
-        @reaction_user = fetch_reaction_user
-
-        unless @reaction_user.persisted?
-          @reaction.update!(count_cache: @reaction.count_cache + 1)
-          @reaction_user.update!(reaction_id: @reaction.id)
-        end
+        reaction = reaction_scope.first_or_create
+        reaction_user_scope(reaction)&.first_or_create
         add_or_remove_shadow_like
       end
       render_json_dump(post_serializer.as_json)
@@ -48,17 +43,10 @@ module DiscourseReactions
 
     def destroy
       ActiveRecord::Base.transaction do
-        @reaction = fetch_reaction
-        @reaction_user = fetch_reaction_user
+        reaction = reaction_scope.first
+        reaction_user_scope(reaction)&.first&.destroy
 
-        if @reaction_user
-          @reaction_user.destroy
-          if @reaction.count_cache > 1
-            @reaction.update!(count_cache: @reaction.count_cache - 1)
-          else
-            @reaction.destroy
-          end
-        end
+        reaction.destroy if reaction.reload.reaction_users_count == 0
         add_or_remove_shadow_like
       end
       render_json_dump(post_serializer.as_json)
@@ -71,15 +59,15 @@ module DiscourseReactions
       # TODO remove like when all positive emojis are removed for specific user and post
     end
 
-    def fetch_reaction
-      @reaction = DiscourseReactions::Reaction.where(post_id: @post.id,
-                                                     reaction_value: params[:reaction],
-                                                     reaction_type:  DiscourseReactions::Reaction.reaction_types['emoji']).first_or_initialize
+    def reaction_scope
+      DiscourseReactions::Reaction.where(post_id: @post.id,
+                                         reaction_value: params[:reaction],
+                                         reaction_type:  DiscourseReactions::Reaction.reaction_types['emoji'])
     end
 
-    def fetch_reaction_user
-      @reaction_user = DiscourseReactions::ReactionUser.where(reaction_id: @reaction.id,
-                                                              user_id: current_user.id).first_or_initialize
+    def reaction_user_scope(reaction)
+      return nil unless reaction
+      DiscourseReactions::ReactionUser.where(reaction_id: reaction.id, user_id: current_user.id)
     end
 
     def post_serializer

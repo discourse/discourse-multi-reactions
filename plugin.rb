@@ -55,7 +55,7 @@ after_initialize do
         id: reaction.reaction_value,
         type: reaction.reaction_type.to_sym,
         users: reaction.reaction_users.map { |reaction_user| { username: reaction_user.username, avatar_template: reaction_user.avatar_template } },
-        count: reaction.count_cache
+        count: reaction.reaction_users_count
       }
     end
   end
