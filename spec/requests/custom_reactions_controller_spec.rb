@@ -77,4 +77,40 @@ describe DiscourseReactions::CustomReactionsController do
       expect(response.status).to eq(422)
     end
   end
+
+  context 'notification' do
+    before do
+      PostActionNotifier.enable
+    end
+
+    it 'created notification when first positive like' do
+      sign_in(user_1)
+      put "/discourse-reactions/posts/#{post_1.id}/custom_reactions/thumbsup/toggle.json"
+      expect(Notification.count).to eq(1)
+      expect(PostAction.count).to eq(1)
+      expect(PostAction.last.post_action_type_id).to eq(PostActionType.types[:like])
+
+      put "/discourse-reactions/posts/#{post_1.id}/custom_reactions/laughing/toggle.json"
+      expect(Notification.count).to eq(1)
+      expect(PostAction.count).to eq(1)
+
+      sign_in(user_2)
+      put "/discourse-reactions/posts/#{post_1.id}/custom_reactions/thumbsup/toggle.json"
+      expect(Notification.count).to eq(1)
+      expect(PostAction.count).to eq(2)
+
+      put "/discourse-reactions/posts/#{post_1.id}/custom_reactions/thumbsup/toggle.json"
+      expect(Notification.count).to eq(1)
+      expect(PostAction.count).to eq(1)
+
+      sign_in(user_1)
+      put "/discourse-reactions/posts/#{post_1.id}/custom_reactions/thumbsup/toggle.json"
+      expect(Notification.count).to eq(1)
+      expect(PostAction.count).to eq(1)
+
+      put "/discourse-reactions/posts/#{post_1.id}/custom_reactions/laughing/toggle.json"
+      expect(Notification.count).to eq(0)
+      expect(PostAction.count).to eq(0)
+    end
+  end
 end
