@@ -38,12 +38,12 @@ module DiscourseReactions
 
         if reaction_user.persisted?
           reaction_user.destroy
+          remove_shadow_like(reaction)
         else
           reaction_user.save!
+          add_shadow_like_and_notify(reaction)
         end
-
         reaction.destroy if reaction.reload.reaction_users_count == 0
-        add_or_remove_shadow_like
       end
 
       render_json_dump(post_serializer.as_json)
@@ -51,9 +51,20 @@ module DiscourseReactions
 
     private 
 
-    def add_or_remove_shadow_like
-      # TODO add like when positive emoji exists and like was not already given
-      # TODO remove like when all positive emojis are removed for specific user and post
+    def add_shadow_like_and_notify(reaction)
+      return if DiscourseReactions::Reaction.positive.where(post_id: @post.id).by_user(current_user).count != 1
+      PostActionCreator.like(current_user, @post) if reaction.positive?
+      # if reaction.negative_or_neutral?
+      # TODO
+      # notification when reaction is negative or neutral
+      # ideally, I would like to hook to PostAlerter because there is a lot of useful logic there like for example don't create notification when user is muted and
+      # respect user preferences about how often they want to receive like notifications
+      # I think it will be possible and that is a goal
+    end
+
+    def remove_shadow_like(reaction)
+      return if DiscourseReactions::Reaction.positive.where(post_id: @post.id).by_user(current_user).count != 0
+      PostActionDestroyer.new(current_user, @post, PostActionType.types[:like]).perform if reaction.positive?
     end
 
     def reaction_scope
