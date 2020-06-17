@@ -30,25 +30,22 @@ module DiscourseReactions
       render json: reactions
     end
 
-    def create
+    def toggle
       return render_json_error(@post) unless DiscourseReactions::Reaction.valid_reactions.include?(params[:reaction])
-
       ActiveRecord::Base.transaction do
         reaction = reaction_scope.first_or_create
-        reaction_user_scope(reaction)&.first_or_create
-        add_or_remove_shadow_like
-      end
-      render_json_dump(post_serializer.as_json)
-    end
+        reaction_user = reaction_user_scope(reaction)&.first_or_initialize
 
-    def destroy
-      ActiveRecord::Base.transaction do
-        reaction = reaction_scope.first
-        reaction_user_scope(reaction)&.first&.destroy
+        if reaction_user.persisted?
+          reaction_user.destroy
+        else
+          reaction_user.save!
+        end
 
         reaction.destroy if reaction.reload.reaction_users_count == 0
         add_or_remove_shadow_like
       end
+
       render_json_dump(post_serializer.as_json)
     end
 

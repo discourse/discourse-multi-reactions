@@ -45,8 +45,7 @@ after_initialize do
 
   DiscourseReactions::Engine.routes.draw do
     get '/discourse-reactions/custom-reactions' => 'custom_reactions#index', constraints: { format: :json }
-    post '/discourse-reactions/custom_reactions' => 'custom_reactions#create', constraints: { format: :json }
-    delete '/discourse-reactions/custom_reactions' => 'custom_reactions#destroy', constraints: { format: :json }
+    put '/discourse-reactions/posts/:post_id/custom_reactions/:reaction/toggle' => 'custom_reactions#toggle', constraints: { format: :json }
   end
 
   add_to_serializer(:post, :reactions) do
