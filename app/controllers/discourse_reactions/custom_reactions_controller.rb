@@ -4,32 +4,6 @@ module DiscourseReactions
   class CustomReactionsController < DiscourseReactionsController
     before_action :fetch_post_from_params
 
-    def index
-      user = User.last
-
-      reactions = [
-        {
-          id: 'otter',
-          type: :emoji,
-          users: [
-            { username: user.username, avatar_template: user.avatar_template }
-          ],
-          count: 1
-        },
-        {
-          id: 'thumbsup',
-          type: :emoji,
-          users: [
-            { username: user.username, avatar_template: user.avatar_template },
-            { username: current_user.username, avatar_template: current_user.avatar_template },
-          ],
-          count: 2
-        }
-      ]
-
-      render json: reactions
-    end
-
     def toggle
       return render_json_error(@post) unless DiscourseReactions::Reaction.valid_reactions.include?(params[:reaction])
       ActiveRecord::Base.transaction do
@@ -38,10 +12,12 @@ module DiscourseReactions
 
         if reaction_user.persisted?
           reaction_user.destroy
-          remove_shadow_like(reaction)
+          remove_shadow_like(reaction) if reaction.positive?
+          remove_reaction_notification(reaction) if reaction.negative?
         else
           reaction_user.save!
-          add_shadow_like_and_notify(reaction)
+          add_shadow_like(reaction) if reaction.positive?
+          add_reaction_notification(reaction) if reaction.negative?
         end
         reaction.destroy if reaction.reload.reaction_users_count == 0
       end
@@ -51,20 +27,22 @@ module DiscourseReactions
 
     private 
 
-    def add_shadow_like_and_notify(reaction)
+    def add_shadow_like(reaction)
       return if DiscourseReactions::Reaction.positive.where(post_id: @post.id).by_user(current_user).count != 1
-      PostActionCreator.like(current_user, @post) if reaction.positive?
-      # if reaction.negative_or_neutral?
-      # TODO
-      # notification when reaction is negative or neutral
-      # ideally, I would like to hook to PostAlerter because there is a lot of useful logic there like for example don't create notification when user is muted and
-      # respect user preferences about how often they want to receive like notifications
-      # I think it will be possible and that is a goal
+      PostActionCreator.like(current_user, @post)
     end
 
     def remove_shadow_like(reaction)
       return if DiscourseReactions::Reaction.positive.where(post_id: @post.id).by_user(current_user).count != 0
       PostActionDestroyer.new(current_user, @post, PostActionType.types[:like]).perform if reaction.positive?
+    end
+
+    def add_reaction_notification(reaction)
+      ReactionNotification.new(reaction, current_user).create
+    end
+
+    def remove_reaction_notification(reaction)
+      ReactionNotification.new(reaction, current_user).delete
     end
 
     def reaction_scope
