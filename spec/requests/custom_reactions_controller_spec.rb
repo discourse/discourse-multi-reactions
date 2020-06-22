@@ -16,7 +16,7 @@ describe DiscourseReactions::CustomReactionsController do
           'id' => 'thumbsup',
           'type' => 'emoji',
           'users' => [
-            { 'username' => user_1.username, 'avatar_template' => user_1.avatar_template }
+            { 'username' => user_1.username, 'avatar_template' => user_1.avatar_template, 'can_undo' => true }
           ],
           'count' => 1
         }
@@ -30,7 +30,7 @@ describe DiscourseReactions::CustomReactionsController do
           'id' => 'thumbsup',
           'type' => 'emoji',
           'users' => [
-            { 'username' => user_1.username, 'avatar_template' => user_1.avatar_template }
+            { 'username' => user_1.username, 'avatar_template' => user_1.avatar_template, 'can_undo' => true }
           ],
           'count' => 1
         }
@@ -51,8 +51,8 @@ describe DiscourseReactions::CustomReactionsController do
       expect(reaction.reaction_value). to eq('thumbsup')
       expect(reaction.reaction_users_count).to eq(2)
       expect(JSON.parse(response.body)['reactions'][0]['users']).to eq([
-        { 'username' => user_1.username, 'avatar_template' => user_1.avatar_template },
-        { 'username' => user_2.username, 'avatar_template' => user_2.avatar_template }
+        { 'username' => user_1.username, 'avatar_template' => user_1.avatar_template, 'can_undo' => true },
+        { 'username' => user_2.username, 'avatar_template' => user_2.avatar_template, 'can_undo' => true }
       ])
 
       put "/discourse-reactions/posts/#{post_1.id}/custom-reactions/thumbsup/toggle.json"
