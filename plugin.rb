@@ -34,13 +34,15 @@ after_initialize do
     "../lib/discourse_reactions/post_extension.rb",
     "../lib/discourse_reactions/topic_view_extension.rb",
     "../lib/discourse_reactions/notification_extension.rb",
-    "../lib/discourse_reactions/post_alerter_extension.rb"
+    "../lib/discourse_reactions/post_alerter_extension.rb",
+    "../lib/discourse_reactions/guardian_extension.rb"
   ].each { |path| load File.expand_path(path, __FILE__) }
 
   reloadable_patch do |plugin|
     Post.class_eval { prepend DiscourseReactions::PostExtension }
     TopicView.class_eval { prepend DiscourseReactions::TopicViewExtension }
     PostAlerter.class_eval { prepend DiscourseReactions::PostAlerterExtension }
+    Guardian.class_eval { prepend DiscourseReactions::GuardianExtension }
     Notification.singleton_class.class_eval { prepend DiscourseReactions::NotificationExtension }
   end
 
