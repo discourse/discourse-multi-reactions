@@ -61,16 +61,18 @@ after_initialize do
         id: reaction.reaction_value,
         type: reaction.reaction_type.to_sym,
         users: reaction.reaction_users.map { |reaction_user| { username: reaction_user.username, avatar_template: reaction_user.avatar_template, can_undo: reaction_user.can_undo? } },
-        count: reaction.reaction_users_count,
+        count: reaction.reaction_users_count
       }
     end
   end
 
   add_to_serializer(:post, :default_reaction_clicked) do
+    return object.default_reaction_clicked unless object.default_reaction_clicked.nil?
     object
       .reactions
-      .find { |reaction| reaction.reaction_value == SiteSetting.discourse_reactions_like_icon && reaction.reaction_users.find { |reaction_user| reaction_user.user_id == scope.user.id } }
-      .present?
+      .find do |reaction| 
+        reaction.reaction_value == SiteSetting.discourse_reactions_like_icon && reaction.reaction_users.find { |reaction_user| reaction_user.user_id == scope.user.id }
+      end.present?
   end
 
   add_to_serializer(:topic_view, :valid_reactions) do
