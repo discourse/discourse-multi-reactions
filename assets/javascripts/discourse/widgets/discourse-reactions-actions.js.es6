@@ -103,6 +103,9 @@ export default createWidget("discourse-reactions-actions", {
 
     const hasReactions = attrs.post.reactions.length > 0;
     const hasReacted = (attrs.post.reactions || []).reduce((acc, reaction) => {
+      if (!this.currentUser) {
+        return false;
+      }
       if (reaction.users.findBy("username", this.currentUser.username)) {
         acc += 1;
       }
