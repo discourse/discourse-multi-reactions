@@ -112,13 +112,7 @@ after_initialize do
 
   add_to_serializer(:post, :reaction_users_count) do
     return object.reaction_users_count unless object.reaction_users_count.nil?
-    (
-      object.reactions.map(&:reaction_users).flatten.map(&:user_id) |
-      object.post_actions.select do |action|
-        action.post_action_type_id == PostActionType.types[:like] &&
-        action.deleted_at.blank?
-      end.map(&:user_id)
-    ).uniq.count
+    TopicViewSerializer.posts_reaction_users_count(object.id)[object.id]
   end
 
   add_to_serializer(:post, :current_user_used_main_reaction) do
