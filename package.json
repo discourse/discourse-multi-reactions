@@ -1,7 +1,7 @@
 {
-  "name": "discourse-reactions",
+  "name": "discourse-multi-reactions",
   "version": "1.0.0",
-  "repository": "git@github.com:discourse/discourse-reactions.git",
+  "repository": "git@github.com:discourse/discourse-multi-reactions.git",
   "author": "Discourse",
   "license": "MIT",
   "devDependencies": {

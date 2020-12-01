@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-module DiscourseReactions
+module DiscourseMultiReactions
   class ReactionUser < ActiveRecord::Base
-    self.table_name = 'discourse_reactions_reaction_users'
+    self.table_name = 'discourse_multi_reactions_reaction_users'
 
-    belongs_to :reaction, class_name: 'DiscourseReactions::Reaction', counter_cache: true
+    belongs_to :reaction, class_name: 'DiscourseMultiReactions::Reaction', counter_cache: true
     belongs_to :user
 
     delegate :username, to: :user, allow_nil: true

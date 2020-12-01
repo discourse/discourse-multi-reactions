@@ -2,6 +2,6 @@ import RestAdapter from "discourse/adapters/rest";
 
 export default RestAdapter.extend({
   basePath() {
-    return "/discourse-reactions/";
+    return "/discourse-multi-reactions/";
   }
 });

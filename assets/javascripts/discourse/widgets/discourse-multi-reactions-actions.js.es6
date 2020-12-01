@@ -4,7 +4,7 @@ import { Promise } from "rsvp";
 import { h } from "virtual-dom";
 import { next, run } from "@ember/runloop";
 import { createWidget } from "discourse/widgets/widget";
-import CustomReaction from "../models/discourse-reactions-custom-reaction";
+import CustomReaction from "../models/discourse-multi-reactions-custom-reaction";
 import { isTesting } from "discourse-common/config/environment";
 import { later, cancel } from "@ember/runloop";
 
@@ -38,7 +38,7 @@ function moveReactionAnimation(
   fakeReaction.style.opacity = 0;
 
   const list = postContainer.querySelector(
-    ".discourse-reactions-list .reactions"
+    ".discourse-multi-reactions-list .reactions"
   );
 
   if (list) {
@@ -49,10 +49,10 @@ function moveReactionAnimation(
       complete();
     };
   } else {
-    const counter = postContainer.querySelector(".discourse-reactions-counter");
+    const counter = postContainer.querySelector(".discourse-multi-reactions-counter");
 
     const reactionsList = document.createElement("div");
-    reactionsList.classList.add("discourse-reactions-list");
+    reactionsList.classList.add("discourse-multi-reactions-list");
 
     const reactions = document.createElement("div");
     reactions.classList.add("reactions");
@@ -109,8 +109,8 @@ function scaleReactionAnimation(mainReaction, start, end, complete) {
     );
 }
 
-export default createWidget("discourse-reactions-actions", {
-  tagName: "div.discourse-reactions-actions",
+export default createWidget("discourse-multi-reactions-actions", {
+  tagName: "div.discourse-multi-reactions-actions",
 
   defaultState() {
     return {
@@ -119,7 +119,7 @@ export default createWidget("discourse-reactions-actions", {
     };
   },
 
-  buildKey: attrs => `discourse-reactions-actions-${attrs.post.id}`,
+  buildKey: attrs => `discourse-multi-reactions-actions-${attrs.post.id}`,
 
   buildClasses(attrs) {
     if (!attrs.post.reactions) {
@@ -169,7 +169,7 @@ export default createWidget("discourse-reactions-actions", {
 
     if (this.capabilities.touch) {
       const root = document.getElementsByTagName("html")[0];
-      root && root.classList.add("discourse-reactions-no-select");
+      root && root.classList.add("discourse-multi-reactions-no-select");
 
       this._touchStartAt = Date.now();
       this._touchTimeout = later(() => {
@@ -184,7 +184,7 @@ export default createWidget("discourse-reactions-actions", {
     this._touchTimeout && cancel(this._touchTimeout);
 
     const root = document.getElementsByTagName("html")[0];
-    root && root.classList.remove("discourse-reactions-no-select");
+    root && root.classList.remove("discourse-multi-reactions-no-select");
 
     if (this.capabilities.touch) {
       if (event.originalEvent.changedTouches.length) {
@@ -216,7 +216,7 @@ export default createWidget("discourse-reactions-actions", {
           event.originalEvent &&
           event.originalEvent.target &&
           event.originalEvent.target.classList.contains(
-            "discourse-reactions-reaction-button"
+            "discourse-multi-reactions-reaction-button"
           )
         ) {
           this.toggleReactions(event);
@@ -224,7 +224,7 @@ export default createWidget("discourse-reactions-actions", {
       } else {
         if (
           event.target &&
-          event.target.classList.contains("discourse-reactions-reaction-button")
+          event.target.classList.contains("discourse-multi-reactions-reaction-button")
         ) {
           this.toggleLike();
         }
@@ -235,7 +235,7 @@ export default createWidget("discourse-reactions-actions", {
   toggleReaction(params) {
     if (params.canUndo) {
       const pickedReaction = document.querySelector(
-        `[data-post-id="${params.postId}"] .discourse-reactions-picker .pickable-reaction.${params.reaction} .emoji`
+        `[data-post-id="${params.postId}"] .discourse-multi-reactions-picker .pickable-reaction.${params.reaction} .emoji`
       );
 
       const scales = [1.0, 1.75];
@@ -291,13 +291,13 @@ export default createWidget("discourse-reactions-actions", {
     }
 
     const mainReaction = document.querySelector(
-      `[data-post-id="${this.attrs.post.id}"] .discourse-reactions-reaction-button .d-icon`
+      `[data-post-id="${this.attrs.post.id}"] .discourse-multi-reactions-reaction-button .d-icon`
     );
     const scales = [1.0, 1.5];
     return new Promise(resolve => {
       scaleReactionAnimation(mainReaction, scales[0], scales[1], () => {
         const mainReactionIcon = this.siteSettings
-          .discourse_reactions_like_icon;
+          .discourse_multi_reactions_like_icon;
         const hasUsedMainReaction = this.attrs.post
           .current_user_used_main_reaction;
         const template = document.createElement("template");
@@ -311,7 +311,7 @@ export default createWidget("discourse-reactions-actions", {
         scaleReactionAnimation(icon, scales[1], scales[0], () => {
           CustomReaction.toggle(
             this.attrs.post.id,
-            this.siteSettings.discourse_reactions_reaction_for_like
+            this.siteSettings.discourse_multi_reactions_reaction_for_like
           ).then(resolve);
         });
       });
@@ -327,7 +327,7 @@ export default createWidget("discourse-reactions-actions", {
     this._collapseHandler = later(this, this.collapsePanels, 500);
   },
 
-  buildId: attrs => `discourse-reactions-actions-${attrs.post.id}`,
+  buildId: attrs => `discourse-multi-reactions-actions-${attrs.post.id}`,
 
   clickOutside() {
     if (this.state.reactionsPickerExpanded || this.state.statePanelExpanded) {
@@ -341,7 +341,7 @@ export default createWidget("discourse-reactions-actions", {
     this.scheduleRerender();
     this._setupPopper(this.attrs.post.id, "_popperPicker", [
       ".btn-toggle-reaction",
-      ".discourse-reactions-picker"
+      ".discourse-multi-reactions-picker"
     ]);
   },
 
@@ -350,8 +350,8 @@ export default createWidget("discourse-reactions-actions", {
     this.state.statePanelExpanded = true;
     this.scheduleRerender();
     this._setupPopper(this.attrs.post.id, "_popperStatePanel", [
-      ".discourse-reactions-counter",
-      ".discourse-reactions-state-panel"
+      ".discourse-multi-reactions-counter",
+      ".discourse-multi-reactions-state-panel"
     ]);
   },
 
@@ -365,7 +365,7 @@ export default createWidget("discourse-reactions-actions", {
     container &&
       container
         .querySelectorAll(
-          ".discourse-reactions-state-panel.is-expanded, .discourse-reactions-reactions-picker.is-expanded"
+          ".discourse-multi-reactions-state-panel.is-expanded, .discourse-multi-reactions-reactions-picker.is-expanded"
         )
         .forEach(popper => popper.classList.remove("is-expanded"));
 
@@ -377,7 +377,7 @@ export default createWidget("discourse-reactions-actions", {
 
     items.push(
       this.attach(
-        "discourse-reactions-state-panel",
+        "discourse-multi-reactions-state-panel",
         Object.assign({}, attrs, {
           statePanelExpanded: this.state.statePanelExpanded
         })
@@ -387,7 +387,7 @@ export default createWidget("discourse-reactions-actions", {
     if (this.currentUser && attrs.post.user_id !== this.currentUser.id) {
       items.push(
         this.attach(
-          "discourse-reactions-picker",
+          "discourse-multi-reactions-picker",
           Object.assign({}, attrs, {
             reactionsPickerExpanded: this.state.reactionsPickerExpanded
           })
@@ -395,11 +395,11 @@ export default createWidget("discourse-reactions-actions", {
       );
     }
 
-    const doubleButton = [this.attach("discourse-reactions-counter", attrs)];
+    const doubleButton = [this.attach("discourse-multi-reactions-counter", attrs)];
 
     if (this.currentUser && attrs.post.user_id !== this.currentUser.id) {
       doubleButton.push(
-        this.attach("discourse-reactions-reaction-button", attrs)
+        this.attach("discourse-multi-reactions-reaction-button", attrs)
       );
     }
 
@@ -411,10 +411,10 @@ export default createWidget("discourse-reactions-actions", {
   _setupPopper(postId, popperVariable, selectors) {
     next(() => {
       const trigger = document.querySelector(
-        `#discourse-reactions-actions-${postId} ${selectors[0]}`
+        `#discourse-multi-reactions-actions-${postId} ${selectors[0]}`
       );
       const popper = document.querySelector(
-        `#discourse-reactions-actions-${postId} ${selectors[1]}`
+        `#discourse-multi-reactions-actions-${postId} ${selectors[1]}`
       );
 
       if (popper) {

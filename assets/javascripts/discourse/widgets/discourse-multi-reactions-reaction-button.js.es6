@@ -6,10 +6,10 @@ import { later, cancel } from "@ember/runloop";
 
 let _laterHoverHandlers = {};
 
-export default createWidget("discourse-reactions-reaction-button", {
-  tagName: "div.discourse-reactions-reaction-button",
+export default createWidget("discourse-multi-reactions-reaction-button", {
+  tagName: "div.discourse-multi-reactions-reaction-button",
 
-  buildKey: attrs => `discourse-reactions-reaction-button-${attrs.post.id}`,
+  buildKey: attrs => `discourse-multi-reactions-reaction-button-${attrs.post.id}`,
 
   click() {
     this._cancelHoverHandler();
@@ -49,22 +49,22 @@ export default createWidget("discourse-reactions-reaction-button", {
     }
 
     if (likeAction.canToggle && !likeAction.hasOwnProperty("can_undo")) {
-      title = "discourse_reactions.main_reaction.add";
+      title = "discourse_multi_reactions.main_reaction.add";
     }
 
     if (likeAction.canToggle && likeAction.can_undo) {
-      title = "discourse_reactions.main_reaction.remove";
+      title = "discourse_multi_reactions.main_reaction.remove";
     }
 
     if (!likeAction.canToggle) {
-      title = "discourse_reactions.main_reaction.cant_remove";
+      title = "discourse_multi_reactions.main_reaction.cant_remove";
     }
 
     return { title: I18n.t(title) };
   },
 
   html(attrs) {
-    const mainReactionIcon = this.siteSettings.discourse_reactions_like_icon;
+    const mainReactionIcon = this.siteSettings.discourse_multi_reactions_like_icon;
     const hasUsedMainReaction = attrs.post.current_user_used_main_reaction;
     const icon = hasUsedMainReaction
       ? mainReactionIcon

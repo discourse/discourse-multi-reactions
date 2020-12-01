@@ -3,9 +3,9 @@ en:
     admin:
       site_settings:
         categories:
-          discourse_reactions: "Discourse Reactions"
+          discourse_multi_reactions: "Discourse Reactions"
   js:
-    discourse_reactions:
+    discourse_multi_reactions:
       picker:
         react_with: "React to this post with: %{reaction}"
         cant_remove_reaction: "You can’t remove this reaction"

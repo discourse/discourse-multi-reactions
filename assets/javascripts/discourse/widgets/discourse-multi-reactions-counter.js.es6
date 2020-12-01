@@ -5,10 +5,10 @@ import { later, cancel } from "@ember/runloop";
 
 let _laterHoverHandlers = {};
 
-export default createWidget("discourse-reactions-counter", {
-  tagName: "div.discourse-reactions-counter",
+export default createWidget("discourse-multi-reactions-counter", {
+  tagName: "div.discourse-multi-reactions-counter",
 
-  buildKey: attrs => `discourse-reactions-counter-${attrs.post.id}`,
+  buildKey: attrs => `discourse-multi-reactions-counter-${attrs.post.id}`,
 
   click(event) {
     this._cancelHoverHandler();
@@ -49,7 +49,7 @@ export default createWidget("discourse-reactions-counter", {
 
   buildAttributes(attrs) {
     return {
-      title: I18n.t("discourse_reactions.users_reacted", {
+      title: I18n.t("discourse_multi_reactions.users_reacted", {
         count: attrs.post.reaction_users_count
       })
     };
@@ -64,7 +64,7 @@ export default createWidget("discourse-reactions-counter", {
       }
 
       return [
-        this.attach("discourse-reactions-list", attrs),
+        this.attach("discourse-multi-reactions-list", attrs),
         h("div.reactions-counter", count.toString())
       ];
     }

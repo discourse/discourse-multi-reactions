@@ -1,4 +1,4 @@
-# discourse-reactions
+# discourse-multi-reactions
 
 ALPHA don't use yet unless you know what you are doing.
 
@@ -7,5 +7,5 @@ ALPHA don't use yet unless you know what you are doing.
 ### Toggle a reaction
 
 ```
-PUT /discourse-reactions/posts/:post_id/custom-reactions/:reaction/toggle
+PUT /discourse-multi-reactions/posts/:post_id/custom-reactions/:reaction/toggle
 ```

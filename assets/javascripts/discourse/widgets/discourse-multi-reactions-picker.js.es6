@@ -3,10 +3,10 @@ import { emojiUnescape } from "discourse/lib/text";
 import { h } from "virtual-dom";
 import { createWidget } from "discourse/widgets/widget";
 
-export default createWidget("discourse-reactions-picker", {
-  tagName: "div.discourse-reactions-picker",
+export default createWidget("discourse-multi-reactions-picker", {
+  tagName: "div.discourse-multi-reactions-picker",
 
-  buildKey: attrs => `discourse-reactions-picker-${attrs.post.id}`,
+  buildKey: attrs => `discourse-multi-reactions-picker-${attrs.post.id}`,
 
   mouseOut() {
     if (!window.matchMedia("(hover: none)").matches) {
@@ -30,7 +30,7 @@ export default createWidget("discourse-reactions-picker", {
             let canUndo;
             if (
               reaction ===
-              this.siteSettings.discourse_reactions_reaction_for_like
+              this.siteSettings.discourse_multi_reactions_reaction_for_like
             ) {
               isUsed = attrs.post.current_user_used_main_reaction;
               canUndo =
@@ -44,10 +44,10 @@ export default createWidget("discourse-reactions-picker", {
             let title;
             let titleOptions;
             if (canUndo) {
-              title = "discourse_reactions.picker.react_with";
+              title = "discourse_multi_reactions.picker.react_with";
               titleOptions = { reaction };
             } else {
-              title = "discourse_reactions.picker.cant_remove_reaction";
+              title = "discourse_multi_reactions.picker.cant_remove_reaction";
             }
 
             return this.attach("button", {

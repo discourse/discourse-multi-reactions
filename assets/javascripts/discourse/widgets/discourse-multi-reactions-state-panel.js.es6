@@ -2,10 +2,10 @@ import { h } from "virtual-dom";
 import { createWidget } from "discourse/widgets/widget";
 import { avatarFor } from "discourse/widgets/post";
 
-export default createWidget("discourse-reactions-state-panel", {
-  tagName: "div.discourse-reactions-state-panel",
+export default createWidget("discourse-multi-reactions-state-panel", {
+  tagName: "div.discourse-multi-reactions-state-panel",
 
-  buildKey: attrs => `discourse-reactions-state-panel-${attrs.post.id}`,
+  buildKey: attrs => `discourse-multi-reactions-state-panel-${attrs.post.id}`,
 
   mouseOut() {
     if (!window.matchMedia("(hover: none)").matches) {
@@ -62,7 +62,7 @@ export default createWidget("discourse-reactions-state-panel", {
       h(
         "div.counters",
         sortedReactions.map(reaction =>
-          this.attach("discourse-reactions-state-panel-reaction", {
+          this.attach("discourse-multi-reactions-state-panel-reaction", {
             reaction,
             isDisplayed: reaction.id === this.state.displayedReactionId
           })

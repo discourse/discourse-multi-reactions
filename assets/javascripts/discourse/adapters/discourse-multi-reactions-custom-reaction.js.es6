@@ -1,6 +1,6 @@
-import DiscourseReactionsAdapter from "./discourse-reactions-adapter";
+import DiscourseMultiReactionsAdapter from "./discourse-multi-reactions-adapter";
 
-export default DiscourseReactionsAdapter.extend({
+export default DiscourseMultiReactionsAdapter.extend({
   pathFor(store, type, findArgs) {
     const path =
       this.basePath(store, type, findArgs) +

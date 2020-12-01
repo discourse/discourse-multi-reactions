@@ -1,14 +1,14 @@
-discourse_reactions:
-  discourse_reactions_enabled:
+discourse_multi_reactions:
+  discourse_multi_reactions_enabled:
     default: true
     client: true
-  discourse_reactions_like_icon:
+  discourse_multi_reactions_like_icon:
     client: true
     default: "heart"
-  discourse_reactions_reaction_for_like:
+  discourse_multi_reactions_reaction_for_like:
     client: true
     default: "heart"
-  discourse_reactions_enabled_reactions:
+  discourse_multi_reactions_enabled_reactions:
     type: list
     default: laughing|open_mouth|cry|angry|thumbsup|thumbsdown
     client: true

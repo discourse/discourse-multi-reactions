@@ -4,7 +4,7 @@ require 'rails_helper'
 require_relative '../fabricators/reaction_fabricator.rb'
 require_relative '../fabricators/reaction_user_fabricator.rb'
 
-describe DiscourseReactions::ReactionUser do
+describe DiscourseMultiReactions::ReactionUser do
   describe 'delegating methods when the user is nil' do
     let(:reaction_user) { described_class.new(user: nil) }
 

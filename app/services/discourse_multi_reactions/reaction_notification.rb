@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DiscourseReactions
+module DiscourseMultiReactions
   class ReactionNotification
     def initialize(reaction, user)
       @reaction = reaction
@@ -10,16 +10,16 @@ module DiscourseReactions
 
     def create
       return if !enabled_reaction_notifications? ||
-          DiscourseReactions::Reaction
+          DiscourseMultiReactions::Reaction
             .where(post_id: @post.id)
             .by_user(@user)
-            .where('discourse_reactions_reactions.created_at >= ?', 24.hours.ago)
+            .where('discourse_multi_reactions_reactions.created_at >= ?', 24.hours.ago)
             .count != 1
       PostAlerter.new.create_notification(@post.user, Notification.types[:reaction], @post, user_id: @user.id, display_username: @user.username)
     end
 
     def delete
-      return if DiscourseReactions::Reaction.where(post_id: @post.id).by_user(@user).count != 0
+      return if DiscourseMultiReactions::Reaction.where(post_id: @post.id).by_user(@user).count != 0
       read = true
       Notification.where(
         topic_id: @post.topic_id,
@@ -42,8 +42,8 @@ module DiscourseReactions
     def reaction_usernames
       @post.reactions
         .joins(:users)
-        .order("discourse_reactions_reactions.created_at DESC")
-        .where('discourse_reactions_reactions.created_at > ?', 1.day.ago)
+        .order("discourse_multi_reactions_reactions.created_at DESC")
+        .where('discourse_multi_reactions_reactions.created_at > ?', 1.day.ago)
         .pluck(:username)
     end
 
