@@ -3,8 +3,8 @@ import { emojiUnescape } from "discourse/lib/text";
 import { h } from "virtual-dom";
 import { createWidget } from "discourse/widgets/widget";
 
-export default createWidget("discourse-reactions-state-panel-reaction", {
-  tagName: "div.discourse-reactions-state-panel-reaction",
+export default createWidget("discourse-multi-reactions-state-panel-reaction", {
+  tagName: "div.discourse-multi-reactions-state-panel-reaction",
 
   click() {
     if (!this.capabilities.touch) {

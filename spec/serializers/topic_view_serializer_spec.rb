@@ -19,8 +19,8 @@ describe TopicViewSerializer do
     let(:topic_view) { TopicView.new(topic) }
 
     it 'shows valid reactions and user reactions' do
-      SiteSetting.discourse_reactions_like_icon = "heart"
-      SiteSetting.discourse_reactions_enabled_reactions = "laughing|heart|-open_mouth|-cry|-angry|thumbsup|-thumbsdown"
+      SiteSetting.discourse_multi_reactions_like_icon = "heart"
+      SiteSetting.discourse_multi_reactions_enabled_reactions = "laughing|heart|-open_mouth|-cry|-angry|thumbsup|-thumbsdown"
       json = TopicViewSerializer.new(topic_view, scope: Guardian.new(user_1), root: false).as_json
       expect(json[:valid_reactions]).to eq(%w(laughing heart open_mouth cry angry thumbsup thumbsdown).to_set)
       expect(json[:post_stream][:posts][0][:reactions]).to eq(
@@ -50,18 +50,18 @@ describe TopicViewSerializer do
     end
 
     it 'doesnt count deleted likes' do
-      SiteSetting.discourse_reactions_like_icon = "heart"
+      SiteSetting.discourse_multi_reactions_like_icon = "heart"
 
       json = TopicViewSerializer.new(topic_view, scope: Guardian.new(user_2), root: false).as_json
 
       expect(json[:post_stream][:posts][1][:reaction_users_count]).to eq(0)
 
-      DiscourseReactions::ReactionManager.new(reaction_value: "heart", user: user_2, guardian: Guardian.new(user_2), post: post_2).toggle!
+      DiscourseMultiReactions::ReactionManager.new(reaction_value: "heart", user: user_2, guardian: Guardian.new(user_2), post: post_2).toggle!
       json = TopicViewSerializer.new(TopicView.new(topic), scope: Guardian.new(user_2), root: false).as_json
 
       expect(json[:post_stream][:posts][1][:reaction_users_count]).to eq(1)
 
-      DiscourseReactions::ReactionManager.new(reaction_value: "heart", user: user_2, guardian: Guardian.new(user_2), post: post_2).toggle!
+      DiscourseMultiReactions::ReactionManager.new(reaction_value: "heart", user: user_2, guardian: Guardian.new(user_2), post: post_2).toggle!
       json = TopicViewSerializer.new(TopicView.new(topic), scope: Guardian.new(user_2), root: false).as_json
 
       expect(json[:post_stream][:posts][1][:reaction_users_count]).to eq(0)
@@ -76,7 +76,7 @@ describe TopicViewSerializer do
     let(:topic_view) { TopicView.new(topic) }
 
     it 'shows valid reactions and user reactions' do
-      SiteSetting.discourse_reactions_like_icon = "heart"
+      SiteSetting.discourse_multi_reactions_like_icon = "heart"
       json = TopicViewSerializer.new(topic_view, scope: Guardian.new(user_1), root: false).as_json
       expect(json[:post_stream][:posts][0][:reactions]).to eq(
         [

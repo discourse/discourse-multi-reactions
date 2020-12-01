@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module DiscourseReactions::TopicViewSerializerExtension
+module DiscourseMultiReactions::TopicViewSerializerExtension
   def posts
-    if SiteSetting.discourse_reactions_enabled
+    if SiteSetting.discourse_multi_reactions_enabled
       posts = object.posts.includes(:post_actions, reactions: { reaction_users: :user })
       post_ids = posts.map(&:id).uniq
 
@@ -26,9 +26,9 @@ module DiscourseReactions::TopicViewSerializerExtension
                 AND post_action_type_id = :like_id
                 AND deleted_at IS NULL
           UNION ALL
-            SELECT discourse_reactions_reaction_users.user_id, post_id from posts
-              LEFT JOIN discourse_reactions_reactions ON discourse_reactions_reactions.post_id = posts.id
-              LEFT JOIN discourse_reactions_reaction_users ON discourse_reactions_reaction_users.reaction_id = discourse_reactions_reactions.id
+            SELECT discourse_multi_reactions_reaction_users.user_id, post_id from posts
+              LEFT JOIN discourse_multi_reactions_reactions ON discourse_multi_reactions_reactions.post_id = posts.id
+              LEFT JOIN discourse_multi_reactions_reaction_users ON discourse_multi_reactions_reaction_users.reaction_id = discourse_multi_reactions_reactions.id
               WHERE posts.id IN (:post_ids)
         ) AS union_subquery WHERE union_subquery.post_ID IS NOT NULL GROUP BY union_subquery.post_id
       SQL

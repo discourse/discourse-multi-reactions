@@ -4,7 +4,7 @@ require 'rails_helper'
 require_relative '../fabricators/reaction_fabricator.rb'
 require_relative '../fabricators/reaction_user_fabricator.rb'
 
-describe DiscourseReactions::ReactionNotification do
+describe DiscourseMultiReactions::ReactionNotification do
   before do
     PostActionNotifier.enable
   end
@@ -89,7 +89,7 @@ describe DiscourseReactions::ReactionNotification do
   it 'deletes notification when all reactions are removed' do
     described_class.new(thumbsup, user_1).create
     expect(Notification.count).to eq(1)
-    expect(DiscourseReactions::ReactionUser.count).to eq(1)
+    expect(DiscourseMultiReactions::ReactionUser.count).to eq(1)
 
     cry = Fabricate(:reaction, post: post_1, reaction_value: 'cry')
     Fabricate(:reaction_user, reaction: cry, user: user_1)
@@ -102,15 +102,15 @@ describe DiscourseReactions::ReactionNotification do
     expect(Notification.count).to eq(1)
     expect(JSON.parse(Notification.last.data)['display_username']).to eq(user_1.username)
 
-    DiscourseReactions::ReactionUser.find_by(reaction: cry, user: user_1).destroy
-    DiscourseReactions::ReactionUser.find_by(reaction: thumbsup, user: user_1).destroy
+    DiscourseMultiReactions::ReactionUser.find_by(reaction: cry, user: user_1).destroy
+    DiscourseMultiReactions::ReactionUser.find_by(reaction: thumbsup, user: user_1).destroy
     described_class.new(cry, user_1).delete
     described_class.new(thumbsup, user_1).delete
     expect(Notification.count).to eq(1)
     expect(JSON.parse(Notification.last.data)['display_username']).to eq(user_2.username)
     expect(Notification.last.notification_type).to eq(Notification.types[:reaction])
 
-    DiscourseReactions::ReactionUser.find_by(reaction: cry, user: user_2).destroy
+    DiscourseMultiReactions::ReactionUser.find_by(reaction: cry, user: user_2).destroy
     described_class.new(cry, user_2).delete
     expect(Notification.count).to eq(0)
   end

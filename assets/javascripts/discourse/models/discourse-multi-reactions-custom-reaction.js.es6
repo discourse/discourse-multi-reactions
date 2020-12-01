@@ -5,14 +5,14 @@ const CustomReaction = RestModel.extend({
   init() {
     this._super(...arguments);
 
-    this.__type = "discourse-reactions-custom-reaction";
+    this.__type = "discourse-multi-reactions-custom-reaction";
   }
 });
 
 CustomReaction.reopenClass({
   toggle(postId, reactionId) {
     return ajax(
-      `/discourse-reactions/posts/${postId}/custom-reactions/${reactionId}/toggle.json`,
+      `/discourse-multi-reactions/posts/${postId}/custom-reactions/${reactionId}/toggle.json`,
       { type: "PUT" }
     ).catch(e => {
       bootbox.alert(e.jqXHR.responseJSON.errors.join("\n"));

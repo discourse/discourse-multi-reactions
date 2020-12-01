@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DiscourseReactions
+module DiscourseMultiReactions
   class ReactionManager
     def initialize(reaction_value:, user:, guardian:, post:)
       @reaction_value = reaction_value
@@ -11,7 +11,7 @@ module DiscourseReactions
 
     def toggle!
       ActiveRecord::Base.transaction do
-        @reaction_value == DiscourseReactions::Reaction.main_reaction_id ? toggle_like : toggle_reaction
+        @reaction_value == DiscourseMultiReactions::Reaction.main_reaction_id ? toggle_like : toggle_reaction
       end
     end
 
@@ -35,22 +35,22 @@ module DiscourseReactions
     end
 
     def add_reaction_notification
-      DiscourseReactions::ReactionNotification.new(@reaction, @user).create
+      DiscourseMultiReactions::ReactionNotification.new(@reaction, @user).create
     end
 
     def remove_reaction_notification
-      DiscourseReactions::ReactionNotification.new(@reaction, @user).delete
+      DiscourseMultiReactions::ReactionNotification.new(@reaction, @user).delete
     end
 
     def reaction_scope
-      DiscourseReactions::Reaction.where(post_id: @post.id,
+      DiscourseMultiReactions::Reaction.where(post_id: @post.id,
                                          reaction_value: @reaction_value,
-                                         reaction_type: DiscourseReactions::Reaction.reaction_types['emoji'])
+                                         reaction_type: DiscourseMultiReactions::Reaction.reaction_types['emoji'])
     end
 
     def reaction_user_scope
       return nil unless @reaction
-      DiscourseReactions::ReactionUser.where(reaction_id: @reaction.id, user_id: @user.id)
+      DiscourseMultiReactions::ReactionUser.where(reaction_id: @reaction.id, user_id: @user.id)
     end
 
     def add_shadow_like

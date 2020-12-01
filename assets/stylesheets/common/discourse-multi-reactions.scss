@@ -1,10 +1,10 @@
-html.discourse-reactions-no-select {
+html.discourse-multi-reactions-no-select {
   -webkit-touch-callout: none; /* Disables long-touch menu */
   -webkit-user-select: none; /* Disable text selection (for Webkit) */
   user-select: none; /* Disable text selection (standard syntax) */
 }
 
-.discourse-reactions-list {
+.discourse-multi-reactions-list {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -54,7 +54,7 @@ html.discourse-reactions-no-select {
   }
 }
 
-.discourse-reactions-picker {
+.discourse-multi-reactions-picker {
   visibility: hidden;
   display: none;
   padding-bottom: 15px;
@@ -109,7 +109,7 @@ html.discourse-reactions-no-select {
   }
 }
 
-.discourse-reactions-state-panel {
+.discourse-multi-reactions-state-panel {
   min-width: 235px;
   max-width: 275px;
   visibility: hidden;
@@ -158,7 +158,7 @@ html.discourse-reactions-no-select {
   }
 }
 
-.discourse-reactions-state-panel-reaction {
+.discourse-multi-reactions-state-panel-reaction {
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -188,7 +188,7 @@ html.discourse-reactions-no-select {
   }
 }
 
-.discourse-reactions-actions {
+.discourse-multi-reactions-actions {
   display: inline-flex;
 
   .double-button {
@@ -196,7 +196,7 @@ html.discourse-reactions-no-select {
   }
 
   &:not(.has-used-main-reaction) {
-    .discourse-reactions-reaction-button {
+    .discourse-multi-reactions-reaction-button {
       &:hover {
         .d-icon {
           color: $love;
@@ -208,7 +208,7 @@ html.discourse-reactions-no-select {
   }
 
   &.has-used-main-reaction {
-    .discourse-reactions-reaction-button {
+    .discourse-multi-reactions-reaction-button {
       .d-icon {
         color: $love;
       }
@@ -220,19 +220,19 @@ html.discourse-reactions-no-select {
   }
 
   &:not(.can-toggle-main-reaction) {
-    .discourse-reactions-reaction-button {
+    .discourse-multi-reactions-reaction-button {
       cursor: default;
     }
   }
 
   &.can-toggle-main-reaction {
-    .discourse-reactions-reaction-button {
+    .discourse-multi-reactions-reaction-button {
       cursor: pointer;
     }
   }
 
   &.has-reactions {
-    .discourse-reactions-counter:hover {
+    .discourse-multi-reactions-counter:hover {
       background: $primary-low;
 
       .reactions-counter {
@@ -242,7 +242,7 @@ html.discourse-reactions-no-select {
   }
 }
 
-.discourse-reactions-reaction-button {
+.discourse-multi-reactions-reaction-button {
   cursor: default;
   display: flex;
   touch-action: none;
@@ -258,7 +258,7 @@ html.discourse-reactions-no-select {
   }
 }
 
-.discourse-reactions-counter {
+.discourse-multi-reactions-counter {
   display: flex;
   position: relative;
   min-width: 1em;

@@ -3,12 +3,12 @@ import { replaceIcon } from "discourse-common/lib/icon-library";
 
 replaceIcon("notification.reaction", "bell");
 
-function initializeDiscourseReactions(api) {
+function initializeDiscourseMultiReactions(api) {
   api.removePostMenuButton("like");
 
   api.addKeyboardShortcut("l", () => {
     const button = document.querySelector(
-      ".topic-post.selected .discourse-reactions-reaction-button"
+      ".topic-post.selected .discourse-multi-reactions-reaction-button"
     );
     button && button.click();
   });
@@ -20,19 +20,19 @@ function initializeDiscourseReactions(api) {
       return;
     }
 
-    return dec.attach("discourse-reactions-actions", {
+    return dec.attach("discourse-multi-reactions-actions", {
       post
     });
   });
 }
 
 export default {
-  name: "discourse-reactions",
+  name: "discourse-multi-reactions",
 
   initialize(container) {
     const siteSettings = container.lookup("site-settings:main");
-    if (siteSettings.discourse_reactions_enabled) {
-      withPluginApi("0.10.1", initializeDiscourseReactions);
+    if (siteSettings.discourse_multi_reactions_enabled) {
+      withPluginApi("0.10.1", initializeDiscourseMultiReactions);
     }
   }
 };

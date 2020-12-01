@@ -3,8 +3,8 @@ import RawHtml from "discourse/widgets/raw-html";
 import { emojiUnescape } from "discourse/lib/text";
 import { createWidget } from "discourse/widgets/widget";
 
-export default createWidget("discourse-reactions-list", {
-  tagName: "div.discourse-reactions-list",
+export default createWidget("discourse-multi-reactions-list", {
+  tagName: "div.discourse-multi-reactions-list",
 
   html(attrs) {
     const reactions = attrs.post.reactions;

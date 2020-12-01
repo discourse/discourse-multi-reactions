@@ -21,8 +21,8 @@ describe PostSerializer do
 
   before do
     SiteSetting.post_undo_action_window_mins = 10
-    SiteSetting.discourse_reactions_enabled_reactions = '-otter|thumbsup'
-    SiteSetting.discourse_reactions_like_icon = 'heart'
+    SiteSetting.discourse_multi_reactions_enabled_reactions = '-otter|thumbsup'
+    SiteSetting.discourse_multi_reactions_like_icon = 'heart'
   end
 
   it 'renders custom reactions' do
@@ -77,7 +77,7 @@ describe PostSerializer do
 
   context 'disabled' do
     it 'is not extending post serializer when plugin is disabled' do
-      SiteSetting.discourse_reactions_enabled = false
+      SiteSetting.discourse_multi_reactions_enabled = false
       json = PostSerializer.new(post_1, scope: Guardian.new(user_1), root: false).as_json
       expect(json[:reactions]).to be nil
     end
