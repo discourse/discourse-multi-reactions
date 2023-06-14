@@ -69,7 +69,7 @@ html.discourse-multi-reactions-no-select {
 
   .container {
     margin: 0.25em;
-    box-shadow: shadow("card");
+    box-shadow: var(--shadow-card);
     background-color: $secondary;
     z-index: 1;
     border-radius: 2em;
